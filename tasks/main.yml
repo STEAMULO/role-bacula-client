@@ -1,0 +1,49 @@
+---
+- name: install app-backup/bacula
+  portage: package=app-backup/bacula  # USE client-only -sqlite -tcpd
+
+- name: create bacula user
+  user: >
+    name={{ bacula_user }}
+    group=bacula
+    home=/var/lib/bacula
+    shell=/bin/sh
+    system=yes
+  when: bacula_user != 'root'
+
+- name: fix directories privileges
+  file: >
+    state=directory
+    path={{ item.path }}
+    owner={{ item.owner }} group=bacula mode={{ item.mode }}
+  with_items:
+    - { path: /etc/bacula,     owner: root,                mode: '0751' }
+    - { path: /var/lib/bacula, owner: "{{ bacula_user }}", mode: '0750' }
+
+- name: configure bacula-fd
+  template: >
+    src=bacula-fd.conf.j2
+    dest=/etc/bacula/bacula-fd.conf
+    owner=root group=bacula mode=0640
+    validate='bacula-fd -t -c %s'
+  notify: restart bacula-fd
+
+- name: configure bconsole
+  template: >
+    src=bconsole.conf.j2
+    dest=/etc/bacula/bconsole.conf
+    owner=root group=bacula mode=0640
+    validate='bconsole -t -c %s'
+
+- name: configure bacula-fd runscript
+  template: >
+    src=bacula-fd.rc.conf.j2
+    dest=/etc/conf.d/bacula-fd
+    owner=root group=root mode=0640
+  notify: restart bacula-fd
+
+# Trigger handlers now to avoid unnecessary restarts.
+- meta: flush_handlers
+
+- name: enable and start bacula-fd
+  service: name=bacula-fd enabled=yes state=started

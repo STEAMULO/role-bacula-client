@@ -1,0 +1,40 @@
+# {{ ansible_managed }}
+#
+# Bacula File Daemon Configuration file
+#
+
+#
+# List Directors who are permitted to contact this File daemon
+#
+Director {
+	Name = {{ bacula_director_name }}
+	Password = "{{ bacula_director_password }}"
+}
+
+#
+# Restricted Director, used by tray-monitor to get the
+# status of the file daemon
+#
+Director {
+	Name = {{ bacula_monitor_name }}
+	Password = "{{ bacula_monitor_password }}"
+	Monitor = yes
+}
+
+#
+# "Global" File daemon (i.e. client) configuration specifications
+#
+FileDaemon {
+	Name = {{ bacula_client_name }}
+	# where we listen for the director
+	FDport = {{ bacula_client_port }}
+	WorkingDirectory = /var/lib/bacula
+	Pid Directory = /run
+	Maximum Concurrent Jobs = {{ bacula_client_max_concurrent_jobs }}
+}
+
+# Send all messages except skipped files back to Director
+Messages {
+	Name = Standard
+	director = {{ bacula_director_name }} = all, !skipped, !restored
+}
