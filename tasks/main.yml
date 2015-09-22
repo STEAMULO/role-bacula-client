@@ -7,7 +7,8 @@
     name={{ bacula_user }}
     group=bacula
     home=/var/lib/bacula
-    shell=/bin/sh
+    shell=/sbin/nologin
+    createhome=no
     system=yes
   when: bacula_user != 'root'
 
