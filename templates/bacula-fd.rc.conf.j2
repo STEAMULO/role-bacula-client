@@ -1,4 +1,4 @@
 # {{ ansible_managed }}
 
 # Options for the file daemon.
-FD_OPTIONS="-u {{ bacula_user }} -g bacula{{ ' -k' if bacula_fd_allow_read_all | bool else '' }} -v -d 20 -c /etc/bacula/bacula-fd.conf"
+FD_OPTIONS="-u {{ bacula_user }} -g bacula{{ ' -k' if bacula_fd_allow_read_all | bool else '' }} -v -c /etc/bacula/bacula-fd.conf"
