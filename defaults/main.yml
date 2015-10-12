@@ -6,7 +6,7 @@ bacula_client_name: "{{ inventory_hostname }}"
 bacula_client_port: 9102
 
 # Maximal number of concurrent jobs that is client allowed to run.
-bacula_client_max_concurrent_jobs: 6
+bacula_client_max_concurrent_jobs: 20
 
 bacula_director_name: 'bacula-dir'
 bacula_director_port: 9101
