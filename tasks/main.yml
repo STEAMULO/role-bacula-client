@@ -1,6 +1,8 @@
 ---
-- name: install app-backup/bacula
-  portage: package=app-backup/bacula  # USE client-only -sqlite -tcpd
+- name: install bacula-fd
+  apt:
+    name: bacula-fd
+    state: present
 
 - name: create bacula user
   user: >
@@ -27,20 +29,6 @@
     dest=/etc/bacula/bacula-fd.conf
     owner=root group=bacula mode=0640
     validate='bacula-fd -t -c %s'
-  notify: restart bacula-fd
-
-- name: configure bconsole
-  template: >
-    src=bconsole.conf.j2
-    dest=/etc/bacula/bconsole.conf
-    owner=root group=bacula mode=0640
-    validate='bconsole -t -c %s'
-
-- name: configure bacula-fd runscript
-  template: >
-    src=bacula-fd.rc.conf.j2
-    dest=/etc/conf.d/bacula-fd
-    owner=root group=root mode=0640
   notify: restart bacula-fd
 
 # Trigger handlers now to avoid unnecessary restarts.
